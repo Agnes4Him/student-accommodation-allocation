@@ -6,9 +6,14 @@ import * as argon from 'argon2'
 export class StudentService {
     constructor(private prisma: PrismaService) {}
     async register(dto) {
+
         var studentRoom
+        var oldBedCount
+        var newBedCount
+        var roomId
+
         if (!dto.fullName || !dto.password || !dto.age || !dto.department || !dto.hostelName) {
-            return {msg: "Enter details correctly"}
+            return {msg: "Enter your details correctly"}
         }else{
             const hashedPassword = await argon.hash(dto.password)
             const hostel = await this.prisma.hostels.findFirst({
@@ -41,16 +46,44 @@ export class StudentService {
                     })
                 }
             }
+            const getAssignedRoom = await this.prisma.rooms.findFirst({
+                where: {
+                    roomLabel: studentRoom,
+                    hostelName: dto.hostelName
+                }
+            })
+
+            oldBedCount = getAssignedRoom.numberOfBeds
+            newBedCount = oldBedCount - 1
+            roomId = getAssignedRoom.id
+
+            const updateAssignedRoom = await this.prisma.rooms.update({
+                where: {
+                    id: roomId,
+                },
+                data: {
+                    numberOfBeds: newBedCount
+                }
+            })
+
+            return {msg: "Registration is successful and accommdation assigned", room: studentRoom, hostel: dto.hostelName}
         }
-        return {msg: "Registration is successful and accommdation assigned", room: studentRoom, hostel: dto.hostelName}
     }
 
     update(dto) {
         return {msg: 'Student accommodation will be updated here'}    
     }
 
-    remove(dto) {
-        return {msg: 'Student accommodation will be deleted here'}
+    async remove(dto) {
+        const deletedUser = await this.prisma.students.delete({
+            where: {
+                id: dto.id,
+            },
+        })
+
+        if (deletedUser) {
+            return {msg: 'Student accommodation successfully deleted'}
+        }
     }
 
     async list() {

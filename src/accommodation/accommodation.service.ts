@@ -27,13 +27,13 @@ export class AccommodationService {
                 })
 
                 if (room) {
-                    const findHostel = this.prisma.hostels.findFirst({
+                    const findHostel = await this.prisma.hostels.findFirst({
                         where: {
                             name: dto.hostelName,
                         }
                     })
                     if (!findHostel) {
-                        const hostel = this.prisma.hostels.create({
+                        const hostel = await this.prisma.hostels.create({
                             data: {
                                 name: dto.hostelName,
                                 status: "available"
