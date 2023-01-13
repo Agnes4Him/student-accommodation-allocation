@@ -75,14 +75,42 @@ export class StudentService {
     }
 
     async remove(dto) {
-        const deletedUser = await this.prisma.students.delete({
+
+        const student = await this.prisma.students.findFirst({
             where: {
-                id: dto.id,
-            },
+                fullName: dto.fullName,
+                age: dto.age,
+                department:dto.department
+            }
         })
 
-        if (deletedUser) {
-            return {msg: 'Student accommodation successfully deleted'}
+        if (student) {
+            const deletedStudent = await this.prisma.students.delete({
+                where: {
+                    id: student.id,
+                },
+            })
+
+            if (deletedStudent) {
+                let oldBedCount
+                let newBedCount
+                const getStudentRoom = await this.prisma.rooms.findFirst({
+                    where: {
+                        roomLabel: student.room
+                    }
+                })
+                oldBedCount = getStudentRoom.numberOfBeds
+                newBedCount = oldBedCount + 1
+                const updateRoomData = await this.prisma.rooms.update({
+                    where: {
+                        id:getStudentRoom.id
+                    },
+                    data: {
+                        numberOfBeds: newBedCount
+                    }
+                })
+                return {msg: 'Student accommodation successfully deleted'}
+            }
         }
     }
 
