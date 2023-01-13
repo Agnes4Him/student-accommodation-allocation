@@ -12,13 +12,13 @@ export class StudentController {
     }
 
     @Put('update')
-    update() {
-        return this.studentService.update()
+    update(@Body() dto: any) {
+        return this.studentService.update(dto)
     }
 
     @Delete('remove')
-    remove() {
-        return this.studentService.remove()
+    remove(@Body() dto: any) {
+        return this.studentService.remove(dto)
     }
 
     @Get('list')

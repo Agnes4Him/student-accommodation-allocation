@@ -45,12 +45,12 @@ export class StudentService {
         return {msg: "Registration is successful and accommdation assigned", room: studentRoom, hostel: dto.hostelName}
     }
 
-    update() {
-        return {msg: 'I am being updated'}
+    update(dto) {
+        return {msg: 'Student accommodation will be updated here'}    
     }
 
-    remove() {
-        return {msg: 'I have been deleted'}
+    remove(dto) {
+        return {msg: 'Student accommodation will be deleted here'}
     }
 
     async list() {
