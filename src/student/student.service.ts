@@ -70,8 +70,45 @@ export class StudentService {
         }
     }
 
-    update(dto) {
-        return {msg: 'Student accommodation will be updated here'}    
+    async update(dto) { 
+        var assignableRoom
+        var oldRoom
+        var oldHostelName
+
+        const student = await this.prisma.students.findFirst({
+            where: {
+                fullName: dto.fullName,
+                age: dto.age,
+                department: dto.department
+            }
+        }) 
+        if (student) {
+            oldRoom = student.room
+            oldHostelName = student.hostelName
+            const availableRooms = await this.prisma.rooms.findMany({
+                where: {
+                    hostelName: dto.hostelName
+                }
+            })
+            if (availableRooms) {
+                for (let i = 0; i < availableRooms.length; i++) {
+                    if (availableRooms[i].numberOfBeds > 0) {
+                    assignableRoom = availableRooms[i]
+                    break
+                    }
+                }
+                const updateStudentAccommodation = await this.prisma.students.update({
+                    where: {
+                        id: student.id
+                    },
+                    data: {
+                        room: assignableRoom,
+                        hostelName: dto.hostelName
+                    }
+                })
+            }
+            // Update old and new rooms data here
+        } 
     }
 
     async remove(dto) {
