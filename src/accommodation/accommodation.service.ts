@@ -25,6 +25,7 @@ export class AccommodationService {
                         numberOfBeds: dto.numberOfBeds
                     }
                 })
+
                 if (room) {
                     const findHostel = this.prisma.hostels.findFirst({
                         where: {
@@ -39,14 +40,21 @@ export class AccommodationService {
                             }
                         })
                     }
-
+                    return {msg: "Accommodation successfully added"}
                 }
-                return {msg: "Accommodation successfully added"}
             }
         }
     }
 
     search(dto) {
-        return {msg: 'Searching for accommodation'}
+        const hostels = this.prisma.hostels.findMany({
+            where: {
+                status: dto.filter
+            }
+        })
+
+        if (hostels) {
+            return {msg: hostels}
+        }
     }
 }
