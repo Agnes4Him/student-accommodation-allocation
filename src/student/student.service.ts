@@ -66,6 +66,32 @@ export class StudentService {
                 }
             })
 
+            // Update every hostel's status (available or taken)
+            const allHostels = await this.prisma.hostels.findMany({})
+            for (let h = 0; h < allHostels.length; h++) {
+                const eachHostelName = allHostels[h].name
+                const eachHostelStatus = allHostels[h].status
+                const eachHostelId = allHostels[h].id
+                var totalBedCount = 0
+
+                const rooms = await this.prisma.rooms.findMany({})
+                for (let r = 0; r < rooms.length; r++) {
+                    if (eachHostelName === rooms[r].hostelName) {
+                        totalBedCount = totalBedCount + rooms[r].numberOfBeds
+                    }
+                }
+                if (totalBedCount === 0) {
+                    const updateHostelStatus = await this.prisma.hostels.update({
+                        where: {
+                            id: eachHostelId
+                        },
+                        data: {
+                            status: "taken"
+                        }
+                    })
+                }
+            }
+
             return {msg: "Registration is successful and accommdation assigned", room: studentRoom, hostel: dto.hostelName}
         }
     }
@@ -153,6 +179,9 @@ export class StudentService {
                         }
                     })
                 }
+
+                // Update hostels status (available or taken here)
+
                 return {msg: "Change successfully made", room: assignableRoom, hostel: dto.hostelName}
 
             }
@@ -194,6 +223,9 @@ export class StudentService {
                         numberOfBeds: newBedCount
                     }
                 })
+
+                // Update hostels status here (available or taken)
+                
                 return {msg: 'Student accommodation successfully deleted'}
             }
         }

@@ -25,23 +25,20 @@ export class AccommodationService {
                         numberOfBeds: dto.numberOfBeds
                     }
                 })
-
-                if (room) {
-                    const findHostel = await this.prisma.hostels.findFirst({
-                        where: {
+                const findHostel = await this.prisma.hostels.findFirst({
+                    where: {
+                        name: dto.hostelName,
+                    }
+                })
+                if (!findHostel) {
+                    const hostel = await this.prisma.hostels.create({
+                        data: {
                             name: dto.hostelName,
+                            status: "available"
                         }
                     })
-                    if (!findHostel) {
-                        const hostel = await this.prisma.hostels.create({
-                            data: {
-                                name: dto.hostelName,
-                                status: "available"
-                            }
-                        })
-                    }
-                    return {msg: "Accommodation successfully added"}
                 }
+                return {msg: "Accommodation successfully added"}            
             }
         }
     }
