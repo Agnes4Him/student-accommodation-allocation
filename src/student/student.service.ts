@@ -74,6 +74,12 @@ export class StudentService {
         var assignableRoom
         var oldRoom
         var oldHostelName
+        var oldRoomId
+        var oldRoomOldBedCount
+        var oldRoomNewBedCont
+        var newRoomId
+        var newRoomOldBedCount
+        var newRoomNewBedCont
 
         const student = await this.prisma.students.findFirst({
             where: {
@@ -106,8 +112,50 @@ export class StudentService {
                         hostelName: dto.hostelName
                     }
                 })
+                // Update old room data here
+                const getOldRoom = await this.prisma.rooms.findFirst({
+                    where: {
+                        roomLabel: oldRoom,
+                        hostelName: oldHostelName
+                    }
+                })
+                if (getOldRoom) {
+                    oldRoomId = getOldRoom.id
+                    oldRoomOldBedCount = getOldRoom.numberOfBeds
+                    oldRoomNewBedCont = oldRoomOldBedCount + 1
+                    const updateOldRoomData = await this.prisma.rooms.update({
+                        where: {
+                            id: oldRoomId
+                        },
+                        data: {
+                            numberOfBeds: oldRoomNewBedCont
+                        }
+                    })
+                }
+
+                // Update newly assigned room data here
+                const getNewRoom = await this.prisma.rooms.findFirst({
+                    where: {
+                        roomLabel: assignableRoom,
+                        hostelName: dto.HostelName
+                    }
+                })
+                if (getNewRoom) {
+                    newRoomId = getNewRoom.id
+                    newRoomOldBedCount = getNewRoom.numberOfBeds
+                    newRoomNewBedCont = newRoomOldBedCount + 1
+                    const updateNewRoomData = await this.prisma.rooms.update({
+                        where: {
+                            id: newRoomId
+                        },
+                        data: {
+                            numberOfBeds: newRoomNewBedCont
+                        }
+                    })
+                }
+                return {msg: "Change successfully made", room: assignableRoom, hostel: dto.hostelName}
+
             }
-            // Update old and new rooms data here
         } 
     }
 
