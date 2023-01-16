@@ -7,7 +7,7 @@ export class AccommodationService {
 
     async add(dto) {
         if (!dto.roomLabel || !dto.hostelName || !dto.numberOfBeds) {
-            return {msg: 'Details incomplee'}
+            return {msg: 'Details incomplete'}
         }else {
             const findRoom = await this.prisma.rooms.findFirst({
                 where: {
@@ -43,13 +43,12 @@ export class AccommodationService {
         }
     }
 
-    search(dto) {
-        const hostels = this.prisma.hostels.findMany({
+    async search(dto) {
+        const hostels = await this.prisma.hostels.findMany({
             where: {
                 status: dto.filter
             }
         })
-        console.log(hostels)
 
         if (hostels) {
             return {msg: hostels}

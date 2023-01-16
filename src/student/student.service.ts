@@ -232,7 +232,7 @@ export class StudentService {
     }
 
     async list() {
-        var studentsArray
+        var studentsArray = []
 
         const allStudents = await this.prisma.students.findMany({})
         if (allStudents) {
