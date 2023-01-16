@@ -122,10 +122,10 @@ export class StudentService {
                     hostelName: dto.hostelName
                 }
             })
-            if (availableRooms) {
+            if (availableRooms.length > 0) {
                 for (let i = 0; i < availableRooms.length; i++) {
                     if (availableRooms[i].numberOfBeds > 0) {
-                    assignableRoom = availableRooms[i]
+                    assignableRoom = availableRooms[i].roomLabel
                     break
                     }
                 }

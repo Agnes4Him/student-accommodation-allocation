@@ -50,7 +50,7 @@ export class AccommodationService {
             }
         })
 
-        if (hostels) {
+        if (hostels.length > 0) {
             return {msg: hostels}
         }else {
             return {msg : "Sorry, no search results to display"}
