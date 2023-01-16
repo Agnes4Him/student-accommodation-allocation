@@ -30,7 +30,7 @@ export class StudentService {
                 if (rooms) {
                     for (let i = 0; i < rooms.length; i++) {
                         if (rooms[i].numberOfBeds > 0) {
-                            studentRoom = rooms[i]
+                            studentRoom = rooms[i].roomLabel
                             break
                         }
                     }

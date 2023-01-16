@@ -49,9 +49,12 @@ export class AccommodationService {
                 status: dto.filter
             }
         })
+        console.log(hostels)
 
         if (hostels) {
             return {msg: hostels}
+        }else {
+            return {msg : "Sorry, no search results to display"}
         }
     }
 }
